@@ -24,8 +24,10 @@ import br.com.andre.processos.exceptions.FailedSaveProcesso;
 import br.com.andre.processos.exceptions.ProcessoNotFoundException;
 import br.com.andre.processos.excpetions.NoProcessFound;
 import br.com.andre.processos.models.Processo;
+import br.com.andre.processos.models.ProcessoDataChart;
 import br.com.andre.processos.models.ProcessoRelatorio;
 import br.com.andre.processos.models.report.FontKey;
+import br.com.andre.processos.repository.ProcessoChartRepository;
 import br.com.andre.processos.repository.ProcessoRepository;
 import br.com.andre.processos.utils.PDFReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -35,6 +37,9 @@ public class ProcessoServiceImp implements ProcessoService{
 
 	@Autowired
 	private ProcessoRepository pRepository;
+	
+	@Autowired
+	private ProcessoChartRepository pChartRepository;
 	
 	@Autowired
 	private ObjectMapper mapper;
@@ -131,6 +136,14 @@ public class ProcessoServiceImp implements ProcessoService{
 		List<Processo> p = pRepository.findBySetenciadoFalse();
 		if(p.isEmpty()) throw new NoProcessFound();
 		return p;
+	}
+
+	@Override
+	public ProcessoDataChart getDataChart() {
+		
+		List<ProcessoDataChart> p = (List<ProcessoDataChart>) pChartRepository.findAll();
+		
+		return p.get(0);
 	}
 
 }

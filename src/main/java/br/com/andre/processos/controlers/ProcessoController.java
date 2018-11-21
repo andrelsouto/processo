@@ -44,6 +44,12 @@ public class ProcessoController extends GenericController {
 		}
 	}
 	
+	@GetMapping("chartData")
+	public ResponseEntity<?> getChartData() {
+		
+		return ResponseEntity.ok( pService.getDataChart());
+	}
+	
 	@GetMapping("getAll")
 	public ResponseEntity<?> getAllProcessos(){
 		

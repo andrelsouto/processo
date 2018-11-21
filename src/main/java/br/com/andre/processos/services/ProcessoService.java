@@ -15,6 +15,7 @@ import br.com.andre.processos.exceptions.FailedSaveProcesso;
 import br.com.andre.processos.exceptions.ProcessoNotFoundException;
 import br.com.andre.processos.excpetions.NoProcessFound;
 import br.com.andre.processos.models.Processo;
+import br.com.andre.processos.models.ProcessoDataChart;
 
 @Service
 public interface ProcessoService {
@@ -34,5 +35,7 @@ public interface ProcessoService {
 	public List<Processo> findProcessosSentenciados() throws NoProcessFound;
 	
 	public List<Processo> findProcessosASentenciar() throws NoProcessFound;
+	
+	public ProcessoDataChart getDataChart();
 
 }
