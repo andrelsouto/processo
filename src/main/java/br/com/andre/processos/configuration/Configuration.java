@@ -18,7 +18,7 @@ public class Configuration {
 			public void addCorsMappings(CorsRegistry registry) {
 				
 				registry.addMapping("/**")
-				.allowedOrigins("https://processo.herokuapp.com", "https://glacial-brushlands-71010.herokuapp.com/")
+				.allowedOrigins("https://processo.herokuapp.com", "https://glacial-brushlands-71010.herokuapp.com")
 				.allowedHeaders("Access-Control-Allow-Origin", "Content-Disposition", "User-Agent")
 				.allowedMethods("POST", "DELETE", "GET", "PATCH", "PUT", "UPDATE")
 				.allowCredentials(false).maxAge(3600);
