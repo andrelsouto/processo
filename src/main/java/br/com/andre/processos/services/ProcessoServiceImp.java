@@ -3,14 +3,17 @@ package br.com.andre.processos.services;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
+import org.exolab.castor.types.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,8 +93,12 @@ public class ProcessoServiceImp implements ProcessoService{
 			
 			List<Processo> processos = new CsvToBeanBuilder(new InputStreamReader(new ByteArrayInputStream(file.getBytes())))
 					.withType(Processo.class).withSeparator(';').build().parse();
-			Predicate<Processo> processoPredicate = p -> p.getNumero().isEmpty();
-			processos.removeIf(processoPredicate);
+			processos.forEach(p -> p.setAnoMeta(LocalDate.now().getYear() + ""));
+			processos.removeIf(p -> (p.getNumero().isEmpty() ||
+					pRepository.existsByNumeroAndAnoMeta(p.getNumero(), p.getAnoMeta()) ||
+					p.getNumero().trim().contains("+") || p.getNumero().length() == 1));
+			if(processos.isEmpty()) return;
+			
 			pRepository.saveAll(processos);
 		} catch (IllegalStateException | IOException e) {
 			
