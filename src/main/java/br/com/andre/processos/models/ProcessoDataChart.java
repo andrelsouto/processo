@@ -6,11 +6,12 @@ import javax.persistence.Id;
 
 @Entity
 public class ProcessoDataChart {
-	
-	@Id
+
 	private int sents;
-	@Column(name="nsents")
+	@Column(name = "nsents")
 	private int nSents;
+	@Id
+	private String anoMeta;
 
 	public int getSents() {
 		return sents;
@@ -26,6 +27,14 @@ public class ProcessoDataChart {
 
 	public void setnSents(int nSents) {
 		this.nSents = nSents;
+	}
+
+	public String getAnoMeta() {
+		return anoMeta;
+	}
+
+	public void setAnoMeta(String anoMeta) {
+		this.anoMeta = anoMeta;
 	}
 
 }

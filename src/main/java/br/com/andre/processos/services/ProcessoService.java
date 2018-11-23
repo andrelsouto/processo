@@ -36,6 +36,6 @@ public interface ProcessoService {
 	
 	public List<Processo> findProcessosASentenciar() throws NoProcessFound;
 	
-	public ProcessoDataChart getDataChart();
+	public List<ProcessoDataChart> getDataChart();
 
 }

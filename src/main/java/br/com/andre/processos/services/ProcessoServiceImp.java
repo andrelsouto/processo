@@ -152,11 +152,11 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 
 	@Override
-	public ProcessoDataChart getDataChart() {
+	public List<ProcessoDataChart> getDataChart() {
 		
 		List<ProcessoDataChart> p = (List<ProcessoDataChart>) pChartRepository.findAll();
 		
-		return p.get(0);
+		return p;
 	}
 
 }
