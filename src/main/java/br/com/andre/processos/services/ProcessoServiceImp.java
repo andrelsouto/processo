@@ -98,6 +98,12 @@ public class ProcessoServiceImp implements ProcessoService{
 					pRepository.existsByNumeroAndAnoMeta(p.getNumero(), p.getAnoMeta()) ||
 					p.getNumero().trim().contains("+") || p.getNumero().length() == 1));
 			if(processos.isEmpty()) return;
+			processos.forEach(p -> {
+				if(pRepository.existsByNumero(p.getNumero())) {
+					p.setId(pRepository.findByNumero(p.getNumero()).getId());
+					p.setAnoMeta(LocalDate.now().getYear() + "");
+				}
+			});
 			
 			pRepository.saveAll(processos);
 		} catch (IllegalStateException | IOException e) {

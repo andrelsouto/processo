@@ -18,6 +18,8 @@ public interface ProcessoRepository extends CrudRepository<Processo, UUID>{
 	public List<Processo> findBySetenciadoFalse();
 	
 	public boolean existsByNumeroAndAnoMeta(String numero, String anoMeta);
+	
+	public boolean existsByNumero(String numero);
 
 	
 }
