@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.exolab.castor.types.Date;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.opencsv.bean.CsvToBeanBuilder;
 
 import br.com.andre.processos.exceptions.FailedSaveProcesso;
+import br.com.andre.processos.exceptions.NoProcessFound;
 import br.com.andre.processos.exceptions.ProcessoNotFoundException;
-import br.com.andre.processos.excpetions.NoProcessFound;
 import br.com.andre.processos.models.Processo;
 import br.com.andre.processos.models.ProcessoDataChart;
 import br.com.andre.processos.models.ProcessoRelatorio;
@@ -95,12 +96,12 @@ public class ProcessoServiceImp implements ProcessoService{
 					.withType(Processo.class).withSeparator(';').build().parse();
 			processos.forEach(p -> p.setAnoMeta(LocalDate.now().getYear() + ""));
 			processos.removeIf(p -> (p.getNumero().isEmpty() ||
-					pRepository.existsByNumeroAndAnoMeta(p.getNumero(), p.getAnoMeta()) ||
+					pRepository.existsByNumeroAndAnoMetaAndDeletedFalse(p.getNumero(), p.getAnoMeta()) ||
 					p.getNumero().trim().contains("+") || p.getNumero().length() == 1));
 			if(processos.isEmpty()) return;
 			processos.forEach(p -> {
-				if(pRepository.existsByNumero(p.getNumero())) {
-					p.setId(pRepository.findByNumero(p.getNumero()).getId());
+				if(pRepository.existsByNumeroAndDeletedFalse(p.getNumero())) {
+					p.setId(pRepository.findByNumeroAndDeletedFalse(p.getNumero()).getId());
 					p.setAnoMeta(LocalDate.now().getYear() + "");
 				}
 			});
@@ -119,13 +120,13 @@ public class ProcessoServiceImp implements ProcessoService{
 		List<Processo> p = (List<Processo>) pRepository.findAll();
 		if(p.isEmpty()) throw new NoProcessFound();
 		
-		return p;
+		return p.stream().filter(processo -> !processo.isDeleted()).collect(Collectors.toList());
 	}
 
 	@Override
 	public Processo sentenciarProcesso(String numero) throws ProcessoNotFoundException {
 		
-		Processo p = pRepository.findByNumero(numero);
+		Processo p = pRepository.findByNumeroAndDeletedFalse(numero);
 		if(p == null) throw new ProcessoNotFoundException();
 		if(p.isSetenciado()) {
 			p.setSetenciado(false);
@@ -138,7 +139,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	@Override
 	public List<Processo> findProcessosSentenciados() throws NoProcessFound {
 		
-		List<Processo> p = pRepository.findBySetenciadoTrue();
+		List<Processo> p = pRepository.findBySetenciadoTrueAndDeletedFalse();
 		if(p.isEmpty()) throw new NoProcessFound();
 		return p;
 	}
@@ -146,7 +147,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	@Override
 	public List<Processo> findProcessosASentenciar() throws NoProcessFound {
 		
-		List<Processo> p = pRepository.findBySetenciadoFalse();
+		List<Processo> p = pRepository.findBySetenciadoFalseAndDeletedFalse();
 		if(p.isEmpty()) throw new NoProcessFound();
 		return p;
 	}
@@ -157,6 +158,17 @@ public class ProcessoServiceImp implements ProcessoService{
 		List<ProcessoDataChart> p = (List<ProcessoDataChart>) pChartRepository.findAll();
 		
 		return p;
+	}
+
+	@Override
+	public void delete(UUID id) throws ProcessoNotFoundException {
+		// TODO Auto-generated method stub
+		
+		Optional<Processo> p = pRepository.findById(id);
+		
+		if (!p.isPresent()) throw new ProcessoNotFoundException();
+		
+		pRepository.deleteProcesso(p.get().getId());
 	}
 
 }

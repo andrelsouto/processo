@@ -1,4 +1,4 @@
-package br.com.andre.processos.excpetions;
+package br.com.andre.processos.exceptions;
 
 public class NoProcessFound extends Exception {
 

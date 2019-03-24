@@ -12,8 +12,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import br.com.andre.processos.exceptions.FailedSaveProcesso;
+import br.com.andre.processos.exceptions.NoProcessFound;
 import br.com.andre.processos.exceptions.ProcessoNotFoundException;
-import br.com.andre.processos.excpetions.NoProcessFound;
 import br.com.andre.processos.models.Processo;
 import br.com.andre.processos.models.ProcessoDataChart;
 
@@ -37,5 +37,7 @@ public interface ProcessoService {
 	public List<Processo> findProcessosASentenciar() throws NoProcessFound;
 	
 	public List<ProcessoDataChart> getDataChart();
+	
+	public void delete(UUID id) throws ProcessoNotFoundException;
 
 }

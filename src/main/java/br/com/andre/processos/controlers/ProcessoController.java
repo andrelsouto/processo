@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.andre.processos.exceptions.FailedSaveProcesso;
+import br.com.andre.processos.exceptions.NoProcessFound;
 import br.com.andre.processos.exceptions.ProcessoNotFoundException;
-import br.com.andre.processos.excpetions.NoProcessFound;
 import br.com.andre.processos.services.ArquivoService;
 import br.com.andre.processos.services.ProcessoService;
 
@@ -116,13 +116,25 @@ public class ProcessoController extends GenericController {
 	@PostMapping("/uploadFile")
 	public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) throws IllegalStateException, IOException{
 		
-//		aService.save(file);
 		try {
 			pService.saveAll(file);
 			return ResponseEntity.ok("Processos salvos com sucesso");
 		} catch (FailedSaveProcesso e) {
-
+			e.printStackTrace();
 			return ResponseEntity.badRequest().body("Erro ao salvar arquivo");
+		}
+	}
+	
+	@PostMapping("/delete/{id}")
+	public ResponseEntity<?> deleteProcesso(@PathVariable("id") String id){
+		
+		try {
+			pService.delete(UUID.fromString(id));
+			return ResponseEntity.ok("Processo deletetado com sucesso!"); 
+		} catch (ProcessoNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body("Processo não encontrado!");
 		}
 	}
 

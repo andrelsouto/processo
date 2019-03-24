@@ -8,15 +8,12 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 @MappedSuperclass
 public abstract class AbstractEntity {
 	
 	@Id
 	@GeneratedValue(generator="UUID")
 	@GenericGenerator(name="UUID", strategy="org.hibernate.id.UUIDGenerator")
-	@JsonIgnore
 	private UUID id;
 
 	public UUID getId() {

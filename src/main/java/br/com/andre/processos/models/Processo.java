@@ -9,12 +9,13 @@ import com.opencsv.bean.CsvBindByPosition;
 public class Processo extends AbstractEntity {
 
 	@CsvBindByPosition(position = 0)
-	@Column(unique = true)
 	private String numero;
 	@CsvBindByPosition(position = 1)
 	private String nome;
 	private boolean setenciado;
 	private String anoMeta;
+	@Column(nullable = false)
+	private boolean deleted;
 
 	public String getNumero() {
 		return numero;
@@ -46,6 +47,14 @@ public class Processo extends AbstractEntity {
 
 	public void setAnoMeta(String anoMeta) {
 		this.anoMeta = anoMeta;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }
