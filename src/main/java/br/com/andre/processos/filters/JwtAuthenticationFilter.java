@@ -15,7 +15,7 @@ import org.springframework.web.filter.GenericFilterBean;
 import br.com.andre.processos.services.jwt.TokenAuthenticationService;
 
 public class JwtAuthenticationFilter extends GenericFilterBean {
-
+	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {

@@ -7,15 +7,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.exolab.castor.types.Date;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -115,6 +113,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 	
 	@Override
+	@Cacheable("processos")
 	public List<Processo> findAllProcessos() throws NoProcessFound {
 		
 		List<Processo> p = (List<Processo>) pRepository.findAll();
@@ -137,6 +136,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 	
 	@Override
+	@Cacheable("processos")
 	public List<Processo> findProcessosSentenciados() throws NoProcessFound {
 		
 		List<Processo> p = pRepository.findBySetenciadoTrueAndDeletedFalse();
@@ -145,6 +145,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 	
 	@Override
+	@Cacheable("processos")
 	public List<Processo> findProcessosASentenciar() throws NoProcessFound {
 		
 		List<Processo> p = pRepository.findBySetenciadoFalseAndDeletedFalse();

@@ -34,7 +34,6 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 			throws AuthenticationException, IOException, ServletException {
 		// TODO Auto-generated method stub
 		
-		System.out.println("aqui");
 		AccountCredentials credentials = new ObjectMapper()
 											.readValue(request.getInputStream(), AccountCredentials.class);
 		
