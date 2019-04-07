@@ -13,6 +13,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -86,6 +88,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 
 	@Override
+	@CacheEvict(value = "processos", allEntries = true)
 	public void saveAll(MultipartFile file) throws FailedSaveProcesso {
 		
 		try {
@@ -123,6 +126,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 
 	@Override
+	@CacheEvict(value = {"processos", "processosSent", "processosNSent"}, allEntries = true)
 	public Processo sentenciarProcesso(String numero) throws ProcessoNotFoundException {
 		
 		Processo p = pRepository.findByNumeroAndDeletedFalse(numero);
@@ -136,7 +140,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 	
 	@Override
-	@Cacheable("processos")
+	@Cacheable("processosSent")
 	public List<Processo> findProcessosSentenciados() throws NoProcessFound {
 		
 		List<Processo> p = pRepository.findBySetenciadoTrueAndDeletedFalse();
@@ -145,7 +149,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 	
 	@Override
-	@Cacheable("processos")
+	@Cacheable("processosNSent")
 	public List<Processo> findProcessosASentenciar() throws NoProcessFound {
 		
 		List<Processo> p = pRepository.findBySetenciadoFalseAndDeletedFalse();
@@ -162,6 +166,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 
 	@Override
+	@CacheEvict(value = {"processos", "processosSent", "processosNSent"}, allEntries = true)
 	public void delete(UUID id) throws ProcessoNotFoundException {
 		// TODO Auto-generated method stub
 		

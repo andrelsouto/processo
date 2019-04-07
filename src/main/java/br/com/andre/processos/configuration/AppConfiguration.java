@@ -22,6 +22,8 @@ public class AppConfiguration {
 		SimpleCacheManager cacheManager = new SimpleCacheManager();
 		List<ConcurrentMapCache> caches = new ArrayList<>();
 		caches.add(new ConcurrentMapCache("processos"));
+		caches.add(new ConcurrentMapCache("processosSent"));
+		caches.add(new ConcurrentMapCache("processosNSent"));
 		cacheManager.setCaches(caches);
 		return cacheManager;
 	}
