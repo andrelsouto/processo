@@ -88,7 +88,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 
 	@Override
-	@CacheEvict(value = "processos", allEntries = true)
+	@CacheEvict(value = { "processos", "processosNSent" }, allEntries = true)
 	public void saveAll(MultipartFile file) throws FailedSaveProcesso {
 		
 		try {
