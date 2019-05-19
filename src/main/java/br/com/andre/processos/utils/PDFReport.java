@@ -22,9 +22,9 @@ public class PDFReport {
 		try {
 			
 			JasperPrint print = JasperFillManager.fillReport(
-					ResourceUtils.getFile("classpath:relatorios/processos.jasper").getAbsolutePath(), params, dataSource);
+					ClassLoader.getSystemClassLoader().getResource("relatorios/processos.jasper").getPath(), params, dataSource);
 			return JasperExportManager.exportReportToPdf(print);
-		} catch (JRException | FileNotFoundException e) {
+		} catch (JRException e) {
 			
 			e.printStackTrace();
 			return null;
