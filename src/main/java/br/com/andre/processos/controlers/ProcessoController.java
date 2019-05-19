@@ -1,6 +1,7 @@
 package br.com.andre.processos.controlers;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,18 @@ public class ProcessoController extends AbstractController {
 			return ResponseEntity.ok(pService.sentenciarProcesso(numero));
 		} catch (ProcessoNotFoundException e) {
 			
+			return ResponseEntity.badRequest().body("Processo não pode ser senticado");
+		}
+	}
+
+	@GetMapping("/sentenciar/{numero}")
+	public ResponseEntity<?> sentenciarProcessoQrCode(@PathVariable("numero") String numero){
+
+		try {
+			pService.sentenciarProcesso(numero);
+			return ResponseEntity.ok(new HashMap<String, String>().put("success", "Processo sentenciado"));
+		} catch (ProcessoNotFoundException e) {
+
 			return ResponseEntity.badRequest().body("Processo não pode ser senticado");
 		}
 	}
