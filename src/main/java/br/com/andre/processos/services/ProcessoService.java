@@ -20,24 +20,24 @@ import br.com.andre.processos.models.ProcessoDataChart;
 @Service
 public interface ProcessoService {
 	
-	public Processo findProcesso(UUID id) throws ProcessoNotFoundException;
+	Processo findProcesso(UUID id) throws ProcessoNotFoundException;
 	
-	public void save(String payload) throws JsonParseException, JsonMappingException, IOException;
+	void save(String payload) throws JsonParseException, JsonMappingException, IOException;
 	
-	public byte[] gerarRelatorio() throws FileNotFoundException, IOException;
+	byte[] gerarRelatorio() throws FileNotFoundException, IOException;
 	
-	public void saveAll(MultipartFile file) throws FailedSaveProcesso;
+	void saveAll(MultipartFile file) throws FailedSaveProcesso;
 	
-	public List<Processo> findAllProcessos() throws NoProcessFound;
+	List<Processo> findAllProcessos() throws NoProcessFound;
 	
-	public Processo sentenciarProcesso(String numero) throws ProcessoNotFoundException;
+	Processo sentenciarProcesso(String numero) throws ProcessoNotFoundException;
 	
-	public List<Processo> findProcessosSentenciados() throws NoProcessFound;
+	List<Processo> findProcessosSentenciados() throws NoProcessFound;
 	
-	public List<Processo> findProcessosASentenciar() throws NoProcessFound;
+	List<Processo> findProcessosASentenciar() throws NoProcessFound;
 	
-	public List<ProcessoDataChart> getDataChart();
+	List<ProcessoDataChart> getDataChart();
 	
-	public void delete(UUID id) throws ProcessoNotFoundException;
+	void delete(UUID id) throws ProcessoNotFoundException;
 
 }

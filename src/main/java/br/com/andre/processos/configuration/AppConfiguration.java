@@ -3,6 +3,7 @@ package br.com.andre.processos.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -32,5 +33,11 @@ public class AppConfiguration {
 	public PDFReport report() {
 		
 		return new PDFReport();
+	}
+
+	@Bean
+	public QRCodeWriter qRCodeWriter() {
+
+		return new QRCodeWriter();
 	}
 }

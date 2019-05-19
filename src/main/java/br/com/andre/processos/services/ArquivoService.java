@@ -11,8 +11,8 @@ import br.com.andre.processos.models.Arquivo;
 @Service
 public interface ArquivoService {
 	
-	public void save(MultipartFile file) throws IOException;
+	void save(MultipartFile file) throws IOException;
 	
-	public Arquivo findById(UUID id);
+	Arquivo findById(UUID id);
 
 }

@@ -43,13 +43,11 @@ public class TokenAuthenticationService {
 							.parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
 							.getBody()
 							.getSubject();
-			
-			if (user != null) {
-				
-				return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
-			}
+
+			return user != null ? new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList())
+					: null;
 		}
-		
+
 		return null;
 	}
 

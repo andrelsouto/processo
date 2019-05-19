@@ -10,7 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @MappedSuperclass
 public abstract class AbstractEntity {
-	
+
 	@Id
 	@GeneratedValue(generator="UUID")
 	@GenericGenerator(name="UUID", strategy="org.hibernate.id.UUIDGenerator")
@@ -21,7 +21,7 @@ public abstract class AbstractEntity {
 	}
 
 	public void setId(UUID id) {
-		this.id = id;
+ 		this.id = id;
 	}
 
 

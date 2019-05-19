@@ -1,21 +1,36 @@
 package br.com.andre.processos.models;
 
-import java.util.UUID;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public class ProcessoRelatorio {
 
 	private Processo processo;
-	
-	public ProcessoRelatorio(Processo processo) {
+	private byte[] sent;
+
+	public ProcessoRelatorio(Processo processo, byte[] sent) {
 		
 		this.processo = processo;
-	}
-	
-	public UUID getId() {
-		return this.processo.getId();
+		this.sent = sent;
 	}
 	
 	public String getNumero() {
 		return this.processo.getNumero();
+	}
+
+	public String getNome() {
+		return this.processo.getNome();
+	}
+
+	public String getAno() {
+		return this.processo.getAnoMeta();
+	}
+
+	public InputStream getSent() {
+		return new ByteArrayInputStream(this.sent);
+	}
+
+	public boolean getSentenciado() {
+		return this.processo.isSetenciado();
 	}
 }

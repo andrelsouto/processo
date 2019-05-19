@@ -12,6 +12,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import br.com.andre.processos.utils.QRCode;
+import com.google.zxing.WriterException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -35,6 +37,8 @@ import br.com.andre.processos.repository.ProcessoChartRepository;
 import br.com.andre.processos.repository.ProcessoRepository;
 import br.com.andre.processos.utils.PDFReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import static br.com.andre.processos.utils.QRCode.gerarQRCode;
 
 @Service
 public class ProcessoServiceImp implements ProcessoService{
@@ -74,13 +78,19 @@ public class ProcessoServiceImp implements ProcessoService{
 		
 		List<Processo> processos = (List<Processo>) pRepository.findAll();
 		List<ProcessoRelatorio> pr = new ArrayList<>();
-		for (Processo processo : processos) {
-			pr.add(new ProcessoRelatorio(processo));
-		}
+		processos.stream().forEach(processo -> {
+			try {
+				pr.add(new ProcessoRelatorio(processo, gerarQRCode("http://processo.herokuapp.com/sentenciar/" + processo.getNumero())));
+			} catch (WriterException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
 		Map<String, Object> p = new HashMap<>();
 		p.put("NOME", "André");
 		p.put("SansSerif", new FontKey("SansSerif", true, false));
-		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(processos);
+		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(pr);
 		String fileName = UUID.randomUUID()+"processo.pdf";
 		return report.reportGenarator(fileName, p, dataSource);
 		

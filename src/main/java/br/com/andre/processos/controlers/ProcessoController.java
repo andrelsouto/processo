@@ -25,25 +25,25 @@ import br.com.andre.processos.services.ProcessoService;
 
 @RestController
 @RequestMapping("/processo")
-public class ProcessoController extends GenericController {
+public class ProcessoController extends AbstractController {
 	
 	@Autowired
 	private ProcessoService pService;
 	@Autowired
 	private ArquivoService aService;
-	
+
 	@GetMapping("/getProcesso")
 	public @ResponseBody ResponseEntity<?> getProcesso(@RequestParam UUID id){
 		
 		try {
-			
+
 			return ResponseEntity.ok(pService.findProcesso(id));
 		} catch (ProcessoNotFoundException e) {
-			
+
 			return ResponseEntity.badRequest().body("Processo não encontrado");
 		}
 	}
-	
+
 	@GetMapping("chartData")
 	public ResponseEntity<?> getChartData() {
 		
@@ -111,6 +111,14 @@ public class ProcessoController extends GenericController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Content-Disposition", "attachment;filename=\"processo.pdf\"");
 		return new HttpEntity<byte[]>(aService.findById(id).getFile(), headers);
+	}
+
+	@GetMapping("/get-relatorio")
+	public  HttpEntity<byte[]> getRelatorio() throws IOException {
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Content-Disposition", "attachment;filename=\"processo.pdf\"");
+		return new HttpEntity<byte[]>(pService.gerarRelatorio());
 	}
 	
 	@PostMapping("/uploadFile")

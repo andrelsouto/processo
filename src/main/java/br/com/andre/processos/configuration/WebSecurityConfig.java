@@ -35,12 +35,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 				.and()
 			.csrf().disable()
 			.authorizeRequests().antMatchers("*", "/login").permitAll()
-			.anyRequest().authenticated()
+			.and()
+				.authorizeRequests().antMatchers("*", "/processo/sentenciar/**").permitAll()
+//				.antMatchers("/processo/*").hasRole("ADMIN")
+				.anyRequest().authenticated()
 				.and()
 				.addFilterBefore(new JwtLoginFilter("/login", authenticationManager()),
 		                UsernamePasswordAuthenticationFilter.class)
 				.addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-	}
+
+    }
+
+
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -49,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 		auth.userDetailsService(uService)
 			.passwordEncoder(new BCryptPasswordEncoder());
 	}
-	
+
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		

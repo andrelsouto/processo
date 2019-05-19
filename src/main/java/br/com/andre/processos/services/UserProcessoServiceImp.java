@@ -1,6 +1,7 @@
 package br.com.andre.processos.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +15,12 @@ public class UserProcessoServiceImp implements UserProcessoService {
 	private UserProcessoRepository repository;
 	
 	@Override
-	public UserProcesso loadUserByUsername(String username) throws UsernameNotFoundException {
+	public User loadUserByUsername(String username) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-		return repository.findByEmail(username);
+		UserProcesso user = repository.findByEmail(username);
+
+		return new User(user.getUsername(), user.getPassword(), user.isEnabled(), user.isAccountNonExpired(),
+				user.isCredentialsNonExpired(), user.isAccountNonLocked(), user.getAuthorities());
 	}
 
 }
