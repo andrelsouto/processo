@@ -15,7 +15,8 @@ public class PDFReport {
 		
 		try {
 			
-			JasperPrint print = JasperFillManager.fillReport("processos.jasper", params, dataSource);
+			JasperPrint print = JasperFillManager.fillReport(
+					this.getClass().getClassLoader().getResource("/relatorios") + "/processos.jasper", params, dataSource);
 			return JasperExportManager.exportReportToPdf(print);
 		} catch (JRException e) {
 			
