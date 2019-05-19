@@ -5,22 +5,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.swing.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class QRCode extends JFrame {
-
-    private static QRCodeWriter qrCodeWriter;
-
-    @Autowired
-    public QRCode(QRCodeWriter qrCodeWriter) {
-        QRCode.qrCodeWriter = qrCodeWriter;
-    }
-
-
 
     public static byte[] gerarQRCode(String text) throws WriterException, IOException {
 

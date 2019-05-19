@@ -11,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Map;
 
 public class PDFReport {
@@ -20,11 +21,11 @@ public class PDFReport {
 	public byte[] reportGenarator(String fileName, Map<String, Object> params, JRBeanCollectionDataSource dataSource) {
 		
 		try {
-			
+
 			JasperPrint print = JasperFillManager.fillReport(
-					ClassLoader.getSystemClassLoader().getResource("relatorios/processos.jasper").getPath(), params, dataSource);
+					getClass().getClassLoader().getResource("relatorios/processos.jasper").openStream(), params, dataSource);
 			return JasperExportManager.exportReportToPdf(print);
-		} catch (JRException e) {
+		} catch (JRException | IOException e) {
 			
 			e.printStackTrace();
 			return null;
