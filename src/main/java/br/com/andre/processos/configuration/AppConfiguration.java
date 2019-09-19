@@ -28,12 +28,6 @@ public class AppConfiguration {
 		cacheManager.setCaches(caches);
 		return cacheManager;
 	}
-	
-	@Bean
-	public PDFReport report() {
-		
-		return new PDFReport();
-	}
 
 	@Bean
 	public QRCodeWriter qRCodeWriter() {

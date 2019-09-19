@@ -36,6 +36,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 			.csrf().disable()
 			.authorizeRequests().antMatchers("*", "/login").permitAll()
 			.and()
+				.authorizeRequests().antMatchers("*", "/processo/token").permitAll()
+				.and()
 				.authorizeRequests().antMatchers("*", "/processo/sentenciar/**").permitAll()
 //				.antMatchers("/processo/*").hasRole("ADMIN")
 				.anyRequest().authenticated()
@@ -60,10 +62,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 	CorsConfigurationSource corsConfigurationSource() {
 		
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
-		corsConfiguration.setAllowedOrigins(
-				Arrays.asList("https://glacial-brushlands-71010.herokuapp.com", "https://processo.herokuapp.com", 
-						"http://glacial-brushlands-71010.herokuapp.com", "http://processo.herokuapp.com"));
-//		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:8080"));
+//		corsConfiguration.setAllowedOrigins(
+//				Arrays.asList("https://glacial-brushlands-71010.herokuapp.com", "https://processo.herokuapp.com",
+//						"http://glacial-brushlands-71010.herokuapp.com", "http://processo.herokuapp.com"));
+		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:8080"));
 		corsConfiguration.setAllowedMethods(Arrays.asList("POST", "GET", "UPDATE", "DELETE", "PUT"));
 		corsConfiguration.addAllowedHeader("*");
 		corsConfiguration.addExposedHeader("Authorization");

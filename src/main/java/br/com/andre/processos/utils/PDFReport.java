@@ -8,12 +8,14 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
+@Component
 public class PDFReport {
 
 	@Autowired

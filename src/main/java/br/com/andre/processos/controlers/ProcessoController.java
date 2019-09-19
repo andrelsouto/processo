@@ -1,7 +1,9 @@
 package br.com.andre.processos.controlers;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import br.com.andre.processos.exceptions.ProcessoNotFoundException;
 import br.com.andre.processos.services.ArquivoService;
 import br.com.andre.processos.services.ProcessoService;
 
+import javax.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/processo")
 public class ProcessoController extends AbstractController {
@@ -32,6 +36,11 @@ public class ProcessoController extends AbstractController {
 	private ProcessoService pService;
 	@Autowired
 	private ArquivoService aService;
+
+	@GetMapping("/token")
+	public Map<String, String> token(HttpSession session){
+		return Collections.singletonMap("token", session.getId());
+	}
 
 	@GetMapping("/getProcesso")
 	public @ResponseBody ResponseEntity<?> getProcesso(@RequestParam UUID id){
