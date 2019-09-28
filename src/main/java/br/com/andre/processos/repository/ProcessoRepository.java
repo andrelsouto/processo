@@ -3,6 +3,7 @@ package br.com.andre.processos.repository;
 import java.util.List;
 import java.util.UUID;
 
+import br.com.andre.processos.models.enumerations.SituacaoProcessoEnum;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -17,9 +18,9 @@ public interface ProcessoRepository extends CrudRepository<Processo, UUID>{
 	
 	public Processo findByNumeroAndDeletedFalse(String numero);
 	
-	public List<Processo> findBySetenciadoTrueAndDeletedFalse();
-	
-	public List<Processo> findBySetenciadoFalseAndDeletedFalse();
+	public List<Processo> findBySituacao(SituacaoProcessoEnum situacao);
+
+	public List<Processo> findBySituacaoNot(SituacaoProcessoEnum situacao);
 	
 	public boolean existsByNumeroAndAnoMetaAndDeletedFalse(String numero, String anoMeta);
 	

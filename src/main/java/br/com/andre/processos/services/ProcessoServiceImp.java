@@ -12,10 +12,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import br.com.andre.processos.utils.QRCode;
+import br.com.andre.processos.models.enumerations.SituacaoProcessoEnum;
 import com.google.zxing.WriterException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -76,7 +75,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	@Override
 	public byte[] gerarRelatorio() throws IOException {
 		
-		List<Processo> processos = (List<Processo>) pRepository.findAll();
+		List<Processo> processos = (List<Processo>) pRepository.findBySituacaoNot(SituacaoProcessoEnum.PROCESSO_SUSPENSO);
 		List<ProcessoRelatorio> pr = new ArrayList<>();
 		processos.stream().forEach(processo -> {
 			try {
@@ -140,11 +139,29 @@ public class ProcessoServiceImp implements ProcessoService{
 	public Processo sentenciarProcesso(String numero) throws ProcessoNotFoundException {
 		
 		Processo p = pRepository.findByNumeroAndDeletedFalse(numero);
-		if(p == null) throw new ProcessoNotFoundException();
-		if(p.isSetenciado()) {
-			p.setSetenciado(false);
+		if (p == null || p.getSituacao().equals(SituacaoProcessoEnum.PROCESSO_SUSPENSO)) {
+			throw new ProcessoNotFoundException();
+		} else if (p.getSituacao().equals(SituacaoProcessoEnum.PROCESSO_NAO_SENTENCIADO)) {
+			p.setSituacao(SituacaoProcessoEnum.PROCESSO_SENTENCIADO);
+		} else {
+			p.setSituacao(SituacaoProcessoEnum.PROCESSO_NAO_SENTENCIADO);
 		}
-		else p.setSetenciado(true);
+ 		p = pRepository.save(p);
+		return p;
+	}
+
+	@Override
+	@CacheEvict(value = {"processos", "processosSent", "processosNSent"}, allEntries = true)
+	public Processo suspenderProcesso(String numero) throws ProcessoNotFoundException {
+
+		Processo p = pRepository.findByNumeroAndDeletedFalse(numero);
+		if (p == null) {
+			throw new ProcessoNotFoundException();
+		} else if (p.getSituacao().equals(SituacaoProcessoEnum.PROCESSO_SUSPENSO)) {
+			p.setSituacao(SituacaoProcessoEnum.PROCESSO_NAO_SENTENCIADO);
+		} else {
+			p.setSituacao(SituacaoProcessoEnum.PROCESSO_SUSPENSO);
+		}
 		pRepository.save(p);
 		return p;
 	}
@@ -153,7 +170,16 @@ public class ProcessoServiceImp implements ProcessoService{
 	@Cacheable("processosSent")
 	public List<Processo> findProcessosSentenciados() throws NoProcessFound {
 		
-		List<Processo> p = pRepository.findBySetenciadoTrueAndDeletedFalse();
+		List<Processo> p = pRepository.findBySituacao(SituacaoProcessoEnum.PROCESSO_SENTENCIADO);
+		if(p.isEmpty()) throw new NoProcessFound();
+		return p;
+	}
+
+	@Override
+//	@Cacheable("processosSent")
+	public List<Processo> findProcessosSuspensos() throws NoProcessFound {
+
+		List<Processo> p = pRepository.findBySituacao(SituacaoProcessoEnum.PROCESSO_SUSPENSO);
 		if(p.isEmpty()) throw new NoProcessFound();
 		return p;
 	}
@@ -161,8 +187,8 @@ public class ProcessoServiceImp implements ProcessoService{
 	@Override
 	@Cacheable("processosNSent")
 	public List<Processo> findProcessosASentenciar() throws NoProcessFound {
-		
-		List<Processo> p = pRepository.findBySetenciadoFalseAndDeletedFalse();
+
+		List<Processo> p = pRepository.findBySituacao(SituacaoProcessoEnum.PROCESSO_NAO_SENTENCIADO);
 		if(p.isEmpty()) throw new NoProcessFound();
 		return p;
 	}

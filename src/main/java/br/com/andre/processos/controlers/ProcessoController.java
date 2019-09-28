@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -89,6 +90,15 @@ public class ProcessoController extends AbstractController {
 			return ResponseEntity.badRequest().body("Nenhum processo encontrado");
 		}
 	}
+		@GetMapping("suspensos")
+	public ResponseEntity<?> getProcessosSuspensos(){
+
+		try {
+			return ResponseEntity.ok(pService.findProcessosSuspensos());
+		} catch (NoProcessFound e) {
+			return ResponseEntity.badRequest().body("Nenhum processo encontrado");
+		}
+	}
 	
 	@PostMapping("{numero}")
 	public ResponseEntity<?> sentenciarProcesso(@PathVariable("numero") String numero){
@@ -113,7 +123,18 @@ public class ProcessoController extends AbstractController {
 			return ResponseEntity.badRequest().body("Processo não pode ser senticado");
 		}
 	}
-	
+
+	@PostMapping("/suspender/{numero}")
+	public ResponseEntity<?> suspenderProcessoQrCode(@PathVariable("numero") String numero){
+
+		try {
+			return ResponseEntity.ok(pService.suspenderProcesso(numero));
+		} catch (ProcessoNotFoundException e) {
+
+			return ResponseEntity.badRequest().body("Processo não pode ser senticado");
+		}
+	}
+
 	@PostMapping("/saveProcesso")
 	public @ResponseBody ResponseEntity<?> saveProcesso(@RequestBody String payload){
 		
@@ -144,28 +165,15 @@ public class ProcessoController extends AbstractController {
 	}
 	
 	@PostMapping("/uploadFile")
-	public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) throws IllegalStateException, IOException{
+	public void uploadFile(@RequestParam("file") MultipartFile file) throws IllegalStateException, IOException, FailedSaveProcesso {
 		
-		try {
 			pService.saveAll(file);
-			return ResponseEntity.ok("Processos salvos com sucesso");
-		} catch (FailedSaveProcesso e) {
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body("Erro ao salvar arquivo");
-		}
 	}
 	
 	@PostMapping("/delete/{id}")
-	public ResponseEntity<?> deleteProcesso(@PathVariable("id") String id){
+	public void deleteProcesso(@PathVariable("id") String id) throws ProcessoNotFoundException {
 		
-		try {
 			pService.delete(UUID.fromString(id));
-			return ResponseEntity.ok("Processo deletetado com sucesso!"); 
-		} catch (ProcessoNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body("Processo não encontrado!");
-		}
 	}
 
 }

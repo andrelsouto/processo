@@ -3,9 +3,12 @@ package br.com.andre.processos.models;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+import br.com.andre.processos.models.enumerations.SituacaoProcessoEnum;
 import com.opencsv.bean.CsvBindByPosition;
+import org.hibernate.annotations.Where;
 
 @Entity
+@Where(clause = "deleted = false")
 public class Processo extends AbstractEntity {
 
 	@CsvBindByPosition(position = 0)
@@ -16,6 +19,7 @@ public class Processo extends AbstractEntity {
 	private String anoMeta;
 	@Column(nullable = false)
 	private boolean deleted;
+	private SituacaoProcessoEnum situacao;
 
 	public String getNumero() {
 		return numero;
@@ -57,4 +61,11 @@ public class Processo extends AbstractEntity {
 		this.deleted = deleted;
 	}
 
+	public SituacaoProcessoEnum getSituacao() {
+		return situacao;
+	}
+
+	public void setSituacao(SituacaoProcessoEnum situacao) {
+		this.situacao = situacao;
+	}
 }

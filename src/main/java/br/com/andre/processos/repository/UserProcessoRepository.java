@@ -11,7 +11,7 @@ import br.com.andre.processos.models.UserProcesso;
 @Repository
 public interface UserProcessoRepository extends CrudRepository<UserProcesso, UUID> {
 
-	@EntityGraph(value = "UserProcesso.getAuthorities", type = EntityGraph.EntityGraphType.FETCH)
+//	@EntityGraph(value = "UserProcesso.getAuthorities", type = EntityGraph.EntityGraphType.FETCH)
 	UserProcesso findByEmail(String email);
 	
 }

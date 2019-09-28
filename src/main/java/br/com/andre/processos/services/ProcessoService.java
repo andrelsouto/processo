@@ -31,11 +31,15 @@ public interface ProcessoService {
 	List<Processo> findAllProcessos() throws NoProcessFound;
 	
 	Processo sentenciarProcesso(String numero) throws ProcessoNotFoundException;
-	
+
+	Processo suspenderProcesso(String numero) throws ProcessoNotFoundException;
+
 	List<Processo> findProcessosSentenciados() throws NoProcessFound;
 	
 	List<Processo> findProcessosASentenciar() throws NoProcessFound;
-	
+
+	List<Processo> findProcessosSuspensos() throws NoProcessFound;
+
 	List<ProcessoDataChart> getDataChart();
 	
 	void delete(UUID id) throws ProcessoNotFoundException;
