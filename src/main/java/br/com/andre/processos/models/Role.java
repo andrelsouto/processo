@@ -30,6 +30,6 @@ public class Role extends AbstractEntity implements GrantedAuthority {
 	@Override
 	public String getAuthority() {
 		// TODO Auto-generated method stub
-		return this.role;
+		return role;
 	}
 }

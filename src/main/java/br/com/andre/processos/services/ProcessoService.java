@@ -17,7 +17,6 @@ import br.com.andre.processos.exceptions.ProcessoNotFoundException;
 import br.com.andre.processos.models.Processo;
 import br.com.andre.processos.models.ProcessoDataChart;
 
-@Service
 public interface ProcessoService {
 	
 	Processo findProcesso(UUID id) throws ProcessoNotFoundException;

@@ -1,5 +1,7 @@
 package br.com.andre.processos.models;
 
+import br.com.andre.processos.models.enumerations.SituacaoProcessoEnum;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -31,6 +33,6 @@ public class ProcessoRelatorio {
 	}
 
 	public boolean getSentenciado() {
-		return this.processo.isSetenciado();
+		return this.processo.getSituacao().equals(SituacaoProcessoEnum.PROCESSO_SENTENCIADO);
 	}
 }

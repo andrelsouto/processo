@@ -8,7 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.andre.processos.models.Arquivo;
 
-@Service
 public interface ArquivoService {
 	
 	void save(MultipartFile file) throws IOException;

@@ -53,7 +53,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 					Authentication auth
 					) throws JsonProcessingException {
 		
-		TokenAuthenticationService.addAuthetication(response, auth.getName());
+		TokenAuthenticationService.addAuthetication(response, auth);
 	}
 
 }

@@ -15,7 +15,6 @@ public class Processo extends AbstractEntity {
 	private String numero;
 	@CsvBindByPosition(position = 1)
 	private String nome;
-	private boolean setenciado;
 	private String anoMeta;
 	@Column(nullable = false)
 	private boolean deleted;
@@ -35,14 +34,6 @@ public class Processo extends AbstractEntity {
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	public boolean isSetenciado() {
-		return setenciado;
-	}
-
-	public void setSetenciado(boolean setenciado) {
-		this.setenciado = setenciado;
 	}
 
 	public String getAnoMeta() {
