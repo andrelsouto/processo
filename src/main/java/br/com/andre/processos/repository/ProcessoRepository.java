@@ -16,19 +16,19 @@ import br.com.andre.processos.models.Processo;
 @Transactional
 public interface ProcessoRepository extends CrudRepository<Processo, UUID>{
 	
-	public Processo findByNumeroAndDeletedFalse(String numero);
+	Processo findByNumero(String numero);
 	
-	public List<Processo> findBySituacao(SituacaoProcessoEnum situacao);
+	List<Processo> findBySituacao(SituacaoProcessoEnum situacao);
 
-	public List<Processo> findBySituacaoNot(SituacaoProcessoEnum situacao);
+	List<Processo> findBySituacaoNot(SituacaoProcessoEnum situacao);
 	
-	public boolean existsByNumeroAndAnoMetaAndDeletedFalse(String numero, String anoMeta);
+	boolean existsByNumeroAndAnoMeta(String numero, String anoMeta);
 	
-	public boolean existsByNumeroAndDeletedFalse(String numero);
+	boolean existsByNumero(String numero);
 	
 	@Modifying
 	@Query("update Processo p set p.deleted = true where id = ?1")
-	public void deleteProcesso(UUID id);
+	void deleteProcesso(UUID id);
 
 	
 }

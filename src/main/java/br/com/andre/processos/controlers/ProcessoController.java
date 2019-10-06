@@ -1,33 +1,25 @@
 package br.com.andre.processos.controlers;
 
+import br.com.andre.processos.exceptions.FailedSaveProcesso;
+import br.com.andre.processos.exceptions.NoProcessFound;
+import br.com.andre.processos.exceptions.ProcessoAlredyExistsException;
+import br.com.andre.processos.exceptions.ProcessoNotFoundException;
+import br.com.andre.processos.models.Processo;
+import br.com.andre.processos.services.ArquivoService;
+import br.com.andre.processos.services.ProcessoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-import br.com.andre.processos.exceptions.FailedSaveProcesso;
-import br.com.andre.processos.exceptions.NoProcessFound;
-import br.com.andre.processos.exceptions.ProcessoNotFoundException;
-import br.com.andre.processos.services.ArquivoService;
-import br.com.andre.processos.services.ProcessoService;
-
-import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/processo")
@@ -41,6 +33,12 @@ public class ProcessoController extends AbstractController {
 	@GetMapping("/token")
 	public Map<String, String> token(HttpSession session){
 		return Collections.singletonMap("token", session.getId());
+	}
+
+	@GetMapping("/validarNumero")
+	public ResponseEntity<Processo> validarNumero(@RequestParam String numeroProcesso) throws ProcessoAlredyExistsException {
+
+		return ResponseEntity.ok(pService.verificarSeExiste(numeroProcesso));
 	}
 
 	@GetMapping("/getProcesso")
@@ -136,16 +134,9 @@ public class ProcessoController extends AbstractController {
 	}
 
 	@PostMapping("/saveProcesso")
-	public @ResponseBody ResponseEntity<?> saveProcesso(@RequestBody String payload){
+	public ResponseEntity<Processo> saveProcesso(@RequestBody Processo processo) throws IOException {
 		
-		try {
-			
-			pService.save(payload);
-			return ResponseEntity.ok("Processo salvo com sucesso");
-		}catch (Exception e) {
-			
-			return ResponseEntity.badRequest().body("Falha ao salvar processo");
-		}
+			return ResponseEntity.ok(pService.save(processo));
 	}
 	
 	@GetMapping("/gerarRelatorio/{id}")

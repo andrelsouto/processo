@@ -1,7 +1,8 @@
 package br.com.andre.processos.configuration;
 
-import java.util.Arrays;
-
+import br.com.andre.processos.filters.JwtAuthenticationFilter;
+import br.com.andre.processos.filters.JwtLoginFilter;
+import br.com.andre.processos.services.UserProcessoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,16 +16,20 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import br.com.andre.processos.filters.JwtAuthenticationFilter;
-import br.com.andre.processos.filters.JwtLoginFilter;
-import br.com.andre.processos.services.UserProcessoService;
+import java.util.Arrays;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 	
-	@Autowired
 	private UserProcessoService uService;
-	
+	private CorsPropertiesConfiguration corsPropertiesConfiguration;
+
+	@Autowired
+	public WebSecurityConfig(UserProcessoService uService, CorsPropertiesConfiguration corsPropertiesConfiguration) {
+		this.uService = uService;
+		this.corsPropertiesConfiguration = corsPropertiesConfiguration;
+	}
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// TODO Auto-generated method stub
@@ -60,12 +65,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
-		
+
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
-		corsConfiguration.setAllowedOrigins(
-				Arrays.asList("https://glacial-brushlands-71010.herokuapp.com", "https://processo.herokuapp.com",
-						"http://glacial-brushlands-71010.herokuapp.com", "http://processo.herokuapp.com"));
-		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:8080"));
+		corsConfiguration.setAllowedOrigins(corsPropertiesConfiguration.getHeaders());
 		corsConfiguration.setAllowedMethods(Arrays.asList("POST", "GET", "UPDATE", "DELETE", "PUT"));
 		corsConfiguration.addAllowedHeader("*");
 		corsConfiguration.addExposedHeader("Authorization");
@@ -73,7 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 		corsConfiguration.setMaxAge(3600L);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", corsConfiguration);
-		
+
 		return source;
 	}
 }

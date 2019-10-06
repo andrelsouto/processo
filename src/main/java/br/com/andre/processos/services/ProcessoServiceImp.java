@@ -1,41 +1,35 @@
 package br.com.andre.processos.services;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import br.com.andre.processos.exceptions.FailedSaveProcesso;
+import br.com.andre.processos.exceptions.NoProcessFound;
+import br.com.andre.processos.exceptions.ProcessoAlredyExistsException;
+import br.com.andre.processos.exceptions.ProcessoNotFoundException;
+import br.com.andre.processos.models.Processo;
+import br.com.andre.processos.models.ProcessoDataChart;
+import br.com.andre.processos.models.ProcessoRelatorio;
 import br.com.andre.processos.models.enumerations.SituacaoProcessoEnum;
+import br.com.andre.processos.models.report.FontKey;
+import br.com.andre.processos.repository.ProcessoChartRepository;
+import br.com.andre.processos.repository.ProcessoRepository;
+import br.com.andre.processos.utils.PDFReport;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.WriterException;
+import com.opencsv.bean.CsvToBeanBuilder;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.opencsv.bean.CsvToBeanBuilder;
-
-import br.com.andre.processos.exceptions.FailedSaveProcesso;
-import br.com.andre.processos.exceptions.NoProcessFound;
-import br.com.andre.processos.exceptions.ProcessoNotFoundException;
-import br.com.andre.processos.models.Processo;
-import br.com.andre.processos.models.ProcessoDataChart;
-import br.com.andre.processos.models.ProcessoRelatorio;
-import br.com.andre.processos.models.report.FontKey;
-import br.com.andre.processos.repository.ProcessoChartRepository;
-import br.com.andre.processos.repository.ProcessoRepository;
-import br.com.andre.processos.utils.PDFReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static br.com.andre.processos.utils.QRCode.gerarQRCode;
 
@@ -66,10 +60,15 @@ public class ProcessoServiceImp implements ProcessoService{
 	}
 
 	@Override
-	public void save(String payload) throws JsonParseException, JsonMappingException, IOException {
-		
-		Processo p = mapper.readValue(payload, Processo.class);
-		pRepository.save(p);
+	public Processo save(Processo processo) throws JsonParseException, JsonMappingException, IOException, ProcessoAlredyExistsException {
+
+		Processo p = verificarSeExiste(processo.getNumero());
+		if (p != null) {
+			throw new ProcessoAlredyExistsException();
+		}
+		processo.setSituacao(SituacaoProcessoEnum.PROCESSO_NAO_SENTENCIADO);
+		processo.setAnoMeta(LocalDate.now().getYear() + "");
+		return pRepository.save(processo);
 	}
 
 	@Override
@@ -106,12 +105,12 @@ public class ProcessoServiceImp implements ProcessoService{
 					.withType(Processo.class).withSeparator(';').build().parse();
 			processos.forEach(p -> p.setAnoMeta(LocalDate.now().getYear() + ""));
 			processos.removeIf(p -> (p.getNumero().isEmpty() ||
-					pRepository.existsByNumeroAndAnoMetaAndDeletedFalse(p.getNumero(), p.getAnoMeta()) ||
+					pRepository.existsByNumeroAndAnoMeta(p.getNumero(), p.getAnoMeta()) ||
 					p.getNumero().trim().contains("+") || p.getNumero().length() == 1));
 			if(processos.isEmpty()) return;
 			processos.forEach(p -> {
-				if(pRepository.existsByNumeroAndDeletedFalse(p.getNumero())) {
-					p.setId(pRepository.findByNumeroAndDeletedFalse(p.getNumero()).getId());
+				if(pRepository.existsByNumero(p.getNumero())) {
+					p.setId(pRepository.findByNumero(p.getNumero()).getId());
 					p.setAnoMeta(LocalDate.now().getYear() + "");
 				}
 			});
@@ -138,7 +137,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	@CacheEvict(value = {"processos", "processosSent", "processosNSent"}, allEntries = true)
 	public Processo sentenciarProcesso(String numero) throws ProcessoNotFoundException {
 		
-		Processo p = pRepository.findByNumeroAndDeletedFalse(numero);
+		Processo p = pRepository.findByNumero(numero);
 		if (p == null || p.getSituacao().equals(SituacaoProcessoEnum.PROCESSO_SUSPENSO)) {
 			throw new ProcessoNotFoundException();
 		} else if (p.getSituacao().equals(SituacaoProcessoEnum.PROCESSO_NAO_SENTENCIADO)) {
@@ -154,7 +153,7 @@ public class ProcessoServiceImp implements ProcessoService{
 	@CacheEvict(value = {"processos", "processosSent", "processosNSent"}, allEntries = true)
 	public Processo suspenderProcesso(String numero) throws ProcessoNotFoundException {
 
-		Processo p = pRepository.findByNumeroAndDeletedFalse(numero);
+		Processo p = pRepository.findByNumero(numero);
 		if (p == null) {
 			throw new ProcessoNotFoundException();
 		} else if (p.getSituacao().equals(SituacaoProcessoEnum.PROCESSO_SUSPENSO)) {
@@ -211,6 +210,13 @@ public class ProcessoServiceImp implements ProcessoService{
 		if (!p.isPresent()) throw new ProcessoNotFoundException();
 		
 		pRepository.deleteProcesso(p.get().getId());
+	}
+
+	@Override
+	@CacheEvict(value = {"processos", "processosSent", "processosNSent"}, allEntries = true)
+	public Processo verificarSeExiste(String numero) throws ProcessoAlredyExistsException {
+
+		return pRepository.findByNumero(numero);
 	}
 
 }

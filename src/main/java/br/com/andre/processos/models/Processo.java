@@ -1,11 +1,11 @@
 package br.com.andre.processos.models;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-
 import br.com.andre.processos.models.enumerations.SituacaoProcessoEnum;
 import com.opencsv.bean.CsvBindByPosition;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 @Entity
 @Where(clause = "deleted = false")

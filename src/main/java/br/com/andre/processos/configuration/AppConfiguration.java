@@ -1,8 +1,5 @@
 package br.com.andre.processos.configuration;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -11,7 +8,8 @@ import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import br.com.andre.processos.utils.PDFReport;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableCaching
