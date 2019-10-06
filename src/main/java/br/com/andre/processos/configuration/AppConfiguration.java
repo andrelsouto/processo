@@ -7,6 +7,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,5 +32,17 @@ public class AppConfiguration {
 	public QRCodeWriter qRCodeWriter() {
 
 		return new QRCodeWriter();
+	}
+
+	@Bean
+	@Profile("dev")
+	CorsPropertiesConfiguration getCors() {
+
+		CorsPropertiesConfiguration cors = new CorsPropertiesConfiguration();
+		List<String> allowedCors = new ArrayList<>();
+		allowedCors.add("http://localhost:4200");
+		allowedCors.add("http://localhost:8080");
+		cors.setHeaders(allowedCors);
+		return cors;
 	}
 }

@@ -3,18 +3,28 @@ package br.com.andre.processos.models;
 import br.com.andre.processos.models.enumerations.SituacaoProcessoEnum;
 import com.opencsv.bean.CsvBindByPosition;
 import org.hibernate.annotations.Where;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 @Where(clause = "deleted = false")
+@Validated
 public class Processo extends AbstractEntity {
 
 	@CsvBindByPosition(position = 0)
+	@NotNull
+	@Size(min = 20, max = 20)
+	@Pattern(regexp = "^[0-9]{20}$")
 	private String numero;
 	@CsvBindByPosition(position = 1)
+	@NotNull
 	private String nome;
+	@Pattern(regexp = "^2[0-9]{3}")
 	private String anoMeta;
 	@Column(nullable = false)
 	private boolean deleted;

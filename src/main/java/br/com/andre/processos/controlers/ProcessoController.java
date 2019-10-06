@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,7 +135,7 @@ public class ProcessoController extends AbstractController {
 	}
 
 	@PostMapping("/saveProcesso")
-	public ResponseEntity<Processo> saveProcesso(@RequestBody Processo processo) throws IOException {
+	public ResponseEntity<Processo> saveProcesso(@RequestBody @Valid Processo processo) throws IOException {
 		
 			return ResponseEntity.ok(pService.save(processo));
 	}
